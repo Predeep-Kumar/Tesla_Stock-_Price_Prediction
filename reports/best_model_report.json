@@ -1,0 +1,24 @@
+{
+    "model_name": "LSTM_Tuned",
+    "selection_method": "Composite score based on average MAPE and stability across 1D, 5D, and 10D horizons",
+    "model_path": "./models/lstm_tuned.h5",
+    "metrics": {
+        "Model": "LSTM_Tuned",
+        "Test_MSE_Scaled": 0.003861733013764,
+        "MSE_1D": 218.37789916992188,
+        "RMSE_1D": 14.777614799754454,
+        "MAE_1D": 11.309484481811523,
+        "MAPE_1D": 3.7961564,
+        "MSE_5D": 504.8245849609375,
+        "RMSE_5D": 22.468301781864547,
+        "MAE_5D": 17.11385154724121,
+        "MAPE_5D": 5.881123,
+        "MSE_10D": 824.6130981445312,
+        "RMSE_10D": 28.716077346053574,
+        "MAE_10D": 22.37110137939453,
+        "MAPE_10D": 7.7152834,
+        "MAPE_AVG": 5.797520933333334,
+        "MAPE_STD": 1.960900581287958,
+        "FINAL_SCORE": 7.758421514621292
+    }
+}

@@ -1,0 +1,293 @@
+/* ===============================
+   GLOBAL BASE (ANIMATED BACKGROUND)
+   =============================== */
+
+@keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+body {
+    background: linear-gradient(
+        135deg,
+        #020617,
+        #020617,
+        #020617,
+        #0a1b3f,
+        #020617
+    );
+    background-size: 300% 300%;
+    animation: gradientShift 18s ease infinite;
+
+    color: #e5e7eb;
+    font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+div[data-testid="stAppViewContainer"] {
+    background: transparent !important;
+}
+
+/* ===============================
+   GLASS CARD BASE (DARK GLASS)
+   =============================== */
+
+.glass {
+    background: linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.08),
+        rgba(255, 255, 255, 0.02)
+    );
+    -webkit-backdrop-filter: blur(30px) saturate(160%);
+    backdrop-filter: blur(30px) saturate(160%);
+    
+
+    border-radius: 22px;
+    padding: 22px;
+
+    border: 1px solid rgba(255, 255, 255, 0.14);
+
+    box-shadow:
+        0 30px 80px rgba(0, 0, 0, 0.85),
+        inset 0 1px 1px rgba(255, 255, 255, 0.12),
+        inset 0 -1px 1px rgba(255, 255, 255, 0.04);
+
+    transition:
+        transform 0.3s ease,
+        box-shadow 0.3s ease,
+        background 0.3s ease;
+}
+
+.glass:hover {
+    transform: translateY(-4px);
+
+    box-shadow:
+        0 45px 110px rgba(0, 0, 0, 0.95),
+        inset 0 1px 1px rgba(255, 255, 255, 0.18),
+        inset 0 -1px 1px rgba(255, 255, 255, 0.06);
+}
+
+/* ===============================
+   METRICS
+   =============================== */
+
+.metric-title {
+    font-size: 16px;
+    font-weight: 500;
+    color: #ffffff;
+}
+
+.metric-value {
+    font-size: 32px;
+    font-weight: 700;
+    letter-spacing: -0.4px;
+    color: #f8fafc;
+}
+
+.metric-sub {
+    font-size: 14px;
+    font-weight: 600;
+    color: #cbd5f5;
+}
+
+/* ===============================
+   STATES
+   =============================== */
+
+.positive {
+    color: #22c55e;
+}
+
+.negative {
+    color: #ef4444;
+}
+
+/* ===============================
+   SECTIONS
+   =============================== */
+
+.section-title {
+    font-size: 22px;
+    font-weight: 700;
+    margin: 28px 0 14px;
+    letter-spacing: -0.2px;
+    color: #f8fafc;
+}
+
+/* ===============================
+   STREAMLIT CONTAINER CARDS
+   =============================== */
+
+div[data-testid="stVerticalBlock"] > div:has(div[data-testid="stPlotlyChart"]),
+div[data-testid="stVerticalBlock"] > div:has(div[data-testid="stDataFrame"]) {
+
+    background: linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.06),
+        rgba(255, 255, 255, 0.02)
+    );
+     -webkit-backdrop-filter: blur(28px) saturate(160%);
+    backdrop-filter: blur(28px) saturate(160%);
+   
+
+    border-radius: 20px;
+    padding: 18px;
+
+    border: 1px solid rgba(255, 255, 255, 0.12);
+
+    box-shadow:
+        0 28px 90px rgba(0, 0, 0, 0.9),
+        inset 0 1px 1px rgba(255, 255, 255, 0.08);
+
+    margin-bottom: 28px;
+}
+
+/* ===============================
+   SIDEBAR (DARK GLASS)
+   =============================== */
+
+section[data-testid="stSidebar"] {
+    background: linear-gradient(
+        180deg,
+        rgba(36, 48, 98, 0.88),
+        rgba(9, 15, 43, 0.96)
+    );
+    -webkit-backdrop-filter: blur(30px);
+    backdrop-filter: blur(30px);
+    
+
+    border-right: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+
+.sidebar-header {
+    margin-bottom: 20px;
+}
+
+.sidebar-main-title {
+    font-size: 22px;              /* ⬅ bigger */
+    font-weight: 800;
+    letter-spacing: -0.4px;
+    color: #f8fafc;
+}
+
+.sidebar-description {
+    font-size: 14px;
+    color: #cbd5f5;
+    margin-top: 6px;
+    line-height: 1.6;
+}
+
+
+.sidebar-footer {
+    color: #94a3b8;
+}
+
+.sidebar-section-title {
+    font-size: 20px;              /* ⬅ up from 13 */
+    font-weight: 700;
+    letter-spacing: 0.2px;
+    color: #e5e7eb;
+    margin-top: 18px;
+}
+
+.sidebar-section-sub {
+    font-size: 16px;
+    color: #9ca3af;
+    margin-bottom: 12px;
+    line-height: 1.5;
+}
+
+.sidebar-divider {
+    height: 1px;
+    margin: 22px 0;
+
+    background: linear-gradient(
+        90deg,
+        rgba(255,255,255,0),
+        rgba(255,255,255,0.25),
+        rgba(255,255,255,0)
+    );
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
+    
+}
+.sidebar-divider.glow {
+    background: linear-gradient(
+        90deg,
+        rgba(56,189,248,0),
+        rgba(56,189,248,0.35),
+        rgba(56,189,248,0)
+    );
+}
+
+/* ===============================
+   FOOTER (DARK GLASS)
+   =============================== */
+
+.app-footer {
+    margin-top: 52px;
+    padding: 22px 28px;
+    text-align: center;
+
+    font-size: 13px;
+    line-height: 1.7;
+
+    background: rgba(2, 6, 23, 0.75);
+    -webkit-backdrop-filter: blur(18px);
+    backdrop-filter: blur(18px);
+
+    color: #94a3b8;
+    border-radius: 16px;
+
+    box-shadow: 0 18px 55px rgba(0,0,0,0.85);
+}
+
+.app-footer .footer-warning {
+    color: #38bdf8;
+    font-weight: 600;
+}
+
+.app-footer .footer-highlight {
+    color: #f8fafc;
+    font-weight: 600;
+}
+/* ===============================
+   STREAMLIT SELECTBOX (DROPDOWN)
+   WHITE GLASS OUTLINE
+   =============================== */
+
+/* Main selectbox container */
+div[data-baseweb="select"] > div {
+    background: rgba(15, 23, 42, 0.55) !important;
+    border: 1px solid rgba(255, 255, 255, 0.35) !important;  /* 👈 white outline */
+    border-radius: 12px !important;
+    -webkit-backdrop-filter: blur(18px);
+    backdrop-filter: blur(18px);
+    
+
+    transition:
+        border-color 0.25s ease,
+        box-shadow 0.25s ease,
+        background 0.25s ease;
+}
+
+/* Hover state */
+div[data-baseweb="select"] > div:hover {
+    border-color: rgba(255, 255, 255, 0.55) !important;
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.15);
+}
+
+/* Focus / active state */
+div[data-baseweb="select"] > div:focus-within {
+    border-color: rgba(255, 255, 255, 0.75) !important;
+    box-shadow:
+        0 0 0 1px rgba(255, 255, 255, 0.25),
+        0 0 22px rgba(59, 130, 246, 0.35); /* subtle blue glow */
+}
+
+/* Dropdown text */
+div[data-baseweb="select"] span {
+    color: #f8fafc !important;
+    font-weight: 500;
+}
