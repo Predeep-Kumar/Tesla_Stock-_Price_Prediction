@@ -107,7 +107,7 @@ Tesla_Stock_Price_Predication/
 ### 1️⃣ Clone the Repository
 
 ```
-git clone https://github.com/your-username/Tesla_Stock_Price_Prediction.git
+git clone https://github.com/Predeep-Kumar/Tesla_Stock-_Price_Prediction.git
 ```
 ```
 cd Tesla_Stock_Price_Prediction
