@@ -16,6 +16,12 @@ import plotly.graph_objects as go
 import joblib
 
 
+@st.cache_data(show_spinner=False)
+def load_price_data(path):
+    df = pd.read_csv(path, parse_dates=["Date"])
+    df.sort_values("Date", inplace=True)
+    return df
+
 @st.cache_resource(show_spinner=False)
 def load_forecast_model(model_path):
     return load_model(model_path, compile=False)
@@ -43,9 +49,13 @@ MODEL_DIR = ROOT / "models"
 REPORT_PATH = ROOT / "reports" / "best_model_report.json"
 SCALER_PATH = MODEL_DIR / "scaler.pkl"
 METRICS_CSV = ROOT / "reports" / "model_metrics_summary.csv"
-metrics_df = pd.read_csv(METRICS_CSV)
-metrics_df.set_index("Model", inplace=True)
+@st.cache_data(show_spinner=False)
+def load_model_metrics(path):
+    df = pd.read_csv(path)
+    df.set_index("Model", inplace=True)
+    return df
 
+metrics_df = load_model_metrics(METRICS_CSV)
 st.markdown(
     """
     <div style="text-align:center; margin:30px 0;">
@@ -100,9 +110,7 @@ def calculate_model_confidence(row, forecast_days, volatility):
 
 
 # LOAD DATA
-
-df = pd.read_csv(DATA_PATH, parse_dates=["Date"])
-df.sort_values("Date", inplace=True)
+df = load_price_data(DATA_PATH)
 
 LOOKBACK_DAYS = 60
 recent_df = df.tail(LOOKBACK_DAYS).copy()
@@ -112,8 +120,11 @@ last_close = float(close_prices[-1][0])
 
 
 # LOAD SCALER
+@st.cache_resource(show_spinner=False)
+def load_scaler(path):
+    return joblib.load(path)
 
-scaler = joblib.load(SCALER_PATH)
+scaler = load_scaler(SCALER_PATH)
 scaled_close = scaler.transform(close_prices)
 
 
@@ -253,7 +264,6 @@ with st.sidebar:
             st.session_state.model = load_forecast_model(model_path)
             st.session_state.loaded_model_name = active_model
 
-        # ✅ SAFE PLACE TO UNLOCK UI
         st.session_state.is_rendering = False
 
 
@@ -378,12 +388,21 @@ with st.sidebar:
 
 LOOKBACK = 60
 
-def forecast_prices(series_scaled, days):
+@st.cache_data(show_spinner=False)
+def forecast_prices_cached(
+    model_name,
+    model_path,
+    series_scaled,
+    scaler_path,
+    days
+):
+    model = load_forecast_model(model_path)
+    global scaler
+
     X = series_scaled[-LOOKBACK:].reshape(1, LOOKBACK, 1)
-
     preds_scaled = model.predict(X, verbose=0).flatten()
-
     preds_scaled = preds_scaled[:days].reshape(-1, 1)
+
     return scaler.inverse_transform(preds_scaled).flatten()
 
 
@@ -400,7 +419,13 @@ MIN_TABLE_DAYS = 10
 table_days = max(MIN_TABLE_DAYS, forecast_days)
 
 MAX_DAYS = max(forecast_days, table_days)
-forecast_full = forecast_prices(scaled_close, MAX_DAYS)
+forecast_full = forecast_prices_cached(
+    model_name=active_model,
+    model_path=MODEL_DIR / model_files[active_model],
+    series_scaled=scaled_close,
+    scaler_path=SCALER_PATH,
+    days=MAX_DAYS
+)
 
 forecast = forecast_full[:forecast_days]
 forecast_table = forecast_full[:table_days]
@@ -939,6 +964,21 @@ with col2:
 
 # MULTI-MODEL FORECAST OVERLAY (CORRECT & COMPLETE)
 
+@st.cache_data(show_spinner=False)
+def multi_model_forecast(
+    model_path,
+    series_scaled,
+    scaler_path,
+    days
+):
+    model = load_model(model_path, compile=False)
+    scaler = joblib.load(scaler_path)
+
+    X = series_scaled[-LOOKBACK:].reshape(1, LOOKBACK, 1)
+    preds_scaled = model.predict(X, verbose=0).flatten()
+    preds_scaled = preds_scaled[:days].reshape(-1, 1)
+
+    return scaler.inverse_transform(preds_scaled.reshape(-1, 1)).flatten()
 
 if show_model_comparison:
 
@@ -972,15 +1012,13 @@ if show_model_comparison:
 
         for model_name, model_file in model_files.items():
 
-            temp_model = load_model(MODEL_DIR / model_file, compile=False)
-            
 
-            X = scaled_close[-LOOKBACK:].reshape(1, LOOKBACK, 1)
-
-            preds_scaled = temp_model.predict(X, verbose=0).flatten()
-            preds_scaled = preds_scaled[:forecast_days].reshape(-1, 1)
-
-            preds_real = scaler.inverse_transform(preds_scaled).flatten()
+            preds_real = multi_model_forecast(
+                MODEL_DIR / model_file,
+                scaled_close,
+                SCALER_PATH,
+                forecast_days
+            )
 
             plot_x = [recent_df["Date"].iloc[-1]] + list(future_dates)
             plot_y = [last_close] + list(preds_real)
