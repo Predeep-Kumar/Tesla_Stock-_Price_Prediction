@@ -221,7 +221,7 @@ You can skip the entire training process by downloading the fully prepared proje
 
 🔗 Google Drive (Includes trained models & scaler)
 
-link here
+https://drive.google.com/drive/folders/1BXRrG8CqHIKBaSsUr4Alb5lPI9YEz0mV?usp=sharing
 
 ---
 ---
