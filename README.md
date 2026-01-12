@@ -54,186 +54,6 @@ Create a deep learning–based predictive system to forecast Tesla’s stock clo
 ---
 ---
 
-## 🧠 Deep Learning Models Used
-
-### 1️⃣ SimpleRNN
-
-- Captures short-term temporal dependencies
-- Faster training
-- Used as a baseline comparison model
-
-### 2️⃣ LSTM (Long Short-Term Memory)
-
-- Handles long-term dependencies
-- Mitigates vanishing gradient issues
-- Better suited for volatile financial time-series
-- Shows superior generalization after tuning
-
-### Each model was trained in:
-
-- Baseline configuration
-- Hyperparameter-tuned configuration
-
-
----
----
-
-## 📊 Dataset Details
-
-Dataset: Tesla Stock Price Data (TSLA)
-
-Granularity: Daily prices
-
-Features Available:
-
-- Date
-- Open
-- High
-- Low
-- Close
-- Adj Close
-- Volume
-
-Target Variable: Close price
-
-Scaling: MinMaxScaler
-
-Lookback Window: 60 trading days
-
-Only the closing price was used for modeling, in line with the problem requirements.
-
-Missing values (if any) were handled carefully to preserve time-series continuity, avoiding forward-looking bias.
-
----
----
-
-## 🧪 Model Evaluation Strategy
-
-### Metrics Used
-
-| Metric | Purpose |
-|------|--------|
-| MSE | Penalizes large errors |
-| RMSE | Measures absolute error magnitude |
-| MAE | Average deviation |
-| MAPE | Business-friendly percentage error |
-
-**Primary Metric:** MAPE  
-**Secondary Metrics:** MAE, RMSE  
-**Stability Check:** Consistency across forecast horizons
-
----
-
-### Forecast Horizons Evaluated
-
-- **1-Day**
-- **5-Day**
-- **10-Day**
-
-> Although the system supports forecasts up to **30 days**, formal evaluation focuses on **short-term horizons**, where deep learning models are empirically more reliable for financial data.
-
----
----
-
-## 🏆 Final Model Selection
-
-After comprehensive evaluation, the **Hyper-Tuned LSTM model** was selected as the final production model due to:
-
-- **Lowest forecasting error** across key evaluation horizons  
-- **Superior handling of long-term temporal dependencies**  
-- **Stronger generalization performance** compared to SimpleRNN  
-- **More stable and smoother forecast trajectories**  
-- **Improved business interpretability** for decision support  
-
-The selected model is **automatically loaded by default** in the Streamlit dashboard to ensure optimal forecasting performance.
-
-
----
----
-
-## 🖥️ Streamlit Dashboard Features
-
-### 🔹 Market Snapshot
-- **Last Closing Price** of Tesla stock  
-- **Market Bias** indicator (Bullish / Bearish) based on forecast direction  
-- **Model Confidence Score**, adjusted for recent market volatility  
-
-### 🔹 Forecast Outlook Cards
-- **1-Day, 5-Day, and 10-Day** forecast outlook  
-- Displays **absolute price change** and **percentage change**  
-- Clear **green (upside)** and **red (downside)** visual cues for quick interpretation  
-
-### 🔹 Visualizations
-- **Candlestick chart** showing the last 60 trading days with forecast overlay  
-- **Line trend chart** with highlighted forecast zone  
-- **Forecast candlestick projection** to visualize expected price behavior  
-- **Daily returns bar chart** for short-term price movement analysis  
-- **Rolling volatility chart** to assess market risk  
-- **Multi-model forecast comparison** (optional) to compare RNN vs LSTM behavior  
-
-### 🔹 Advanced Analytics
-- **Buy / Sell / Hold** trading signal based on forecasted returns  
-- **Sharpe Ratio** to evaluate risk-adjusted performance  
-- **Forecast confidence interpretation** for decision support  
-- **Adjustable forecast horizon (1–30 days)** for flexible short-term analysis  
-
-
----
----
-
-## 💼 Business Use Cases
-
-- 📈 **Short-term trading & market trend analysis**  
-  Identify near-term price direction and momentum using deep learning forecasts.
-
-- 📊 **Risk-aware investment decision support**  
-  Combine forecasted returns, volatility, and Sharpe Ratio for informed decisions.
-
-- 🧪 **Model comparison for financial forecasting research**  
-  Analyze performance differences between SimpleRNN and LSTM architectures.
-
-- 🎓 **Educational demonstration of time-series deep learning**  
-  Practical example of applying RNN-based models to real-world financial data.
-
-- 🏢 **Portfolio-grade financial analytics dashboard**  
-  A deployable, interactive dashboard suitable for portfolio and case-study use.
-
----
----
-
-## 🚀 Future Enhancements
-
-- 📰 **News sentiment analysis** using NLP for market context enrichment  
-- 🔁 **Transformer-based time-series models** for long-range dependencies  
-- 📊 **Probabilistic forecasting** with confidence intervals and uncertainty bands  
-- 🌐 **Live market data API integration** for real-time predictions  
-- 📈 **Multi-stock comparison dashboard** for cross-asset analysis  
-- 🔄 **Automated retraining pipeline** for continuous model updates  
-
----
----
-
-## ⚠️ Disclaimer
-
-This project is intended for **educational and analytical purposes only**.  
-It does **not** constitute financial, investment, or trading advice.  
-
-Stock markets are inherently volatile and unpredictable.  
-Predictions generated by this system should be interpreted as **directional insights**, not guaranteed outcomes.
-
-
----
----
-## 🤝 Author
-
-### **Predeep Kumar**
-
-🧑‍💻 **AI Engineer | Deep Learning | Time-Series Forecasting**
-
-Built with ❤️ as a **production-ready deep learning financial forecasting project**,  
-demonstrating strong model design, rigorous evaluation, and deployment-ready analytics.
-
-
 ---
 ---
 
@@ -421,4 +241,187 @@ If you downloaded the project from Google Drive, you do NOT need to run the note
 - Retrain models
 - Modify datasets
 - Experiment with architectures or hyperparameters
+
+---
+---
+
+## 🧠 Deep Learning Models Used
+
+### 1️⃣ SimpleRNN
+
+- Captures short-term temporal dependencies
+- Faster training
+- Used as a baseline comparison model
+
+### 2️⃣ LSTM (Long Short-Term Memory)
+
+- Handles long-term dependencies
+- Mitigates vanishing gradient issues
+- Better suited for volatile financial time-series
+- Shows superior generalization after tuning
+
+### Each model was trained in:
+
+- Baseline configuration
+- Hyperparameter-tuned configuration
+
+
+---
+---
+
+## 📊 Dataset Details
+
+Dataset: Tesla Stock Price Data (TSLA)
+
+Granularity: Daily prices
+
+Features Available:
+
+- Date
+- Open
+- High
+- Low
+- Close
+- Adj Close
+- Volume
+
+Target Variable: Close price
+
+Scaling: MinMaxScaler
+
+Lookback Window: 60 trading days
+
+Only the closing price was used for modeling, in line with the problem requirements.
+
+Missing values (if any) were handled carefully to preserve time-series continuity, avoiding forward-looking bias.
+
+---
+---
+
+## 🧪 Model Evaluation Strategy
+
+### Metrics Used
+
+| Metric | Purpose |
+|------|--------|
+| MSE | Penalizes large errors |
+| RMSE | Measures absolute error magnitude |
+| MAE | Average deviation |
+| MAPE | Business-friendly percentage error |
+
+**Primary Metric:** MAPE  
+**Secondary Metrics:** MAE, RMSE  
+**Stability Check:** Consistency across forecast horizons
+
+---
+
+### Forecast Horizons Evaluated
+
+- **1-Day**
+- **5-Day**
+- **10-Day**
+
+> Although the system supports forecasts up to **30 days**, formal evaluation focuses on **short-term horizons**, where deep learning models are empirically more reliable for financial data.
+
+---
+---
+
+## 🏆 Final Model Selection
+
+After comprehensive evaluation, the **Hyper-Tuned LSTM model** was selected as the final production model due to:
+
+- **Lowest forecasting error** across key evaluation horizons  
+- **Superior handling of long-term temporal dependencies**  
+- **Stronger generalization performance** compared to SimpleRNN  
+- **More stable and smoother forecast trajectories**  
+- **Improved business interpretability** for decision support  
+
+The selected model is **automatically loaded by default** in the Streamlit dashboard to ensure optimal forecasting performance.
+
+
+---
+---
+
+## 🖥️ Streamlit Dashboard Features
+
+### 🔹 Market Snapshot
+- **Last Closing Price** of Tesla stock  
+- **Market Bias** indicator (Bullish / Bearish) based on forecast direction  
+- **Model Confidence Score**, adjusted for recent market volatility  
+
+### 🔹 Forecast Outlook Cards
+- **1-Day, 5-Day, and 10-Day** forecast outlook  
+- Displays **absolute price change** and **percentage change**  
+- Clear **green (upside)** and **red (downside)** visual cues for quick interpretation  
+
+### 🔹 Visualizations
+- **Candlestick chart** showing the last 60 trading days with forecast overlay  
+- **Line trend chart** with highlighted forecast zone  
+- **Forecast candlestick projection** to visualize expected price behavior  
+- **Daily returns bar chart** for short-term price movement analysis  
+- **Rolling volatility chart** to assess market risk  
+- **Multi-model forecast comparison** (optional) to compare RNN vs LSTM behavior  
+
+### 🔹 Advanced Analytics
+- **Buy / Sell / Hold** trading signal based on forecasted returns  
+- **Sharpe Ratio** to evaluate risk-adjusted performance  
+- **Forecast confidence interpretation** for decision support  
+- **Adjustable forecast horizon (1–30 days)** for flexible short-term analysis  
+
+
+---
+---
+
+## 💼 Business Use Cases
+
+- 📈 **Short-term trading & market trend analysis**  
+  Identify near-term price direction and momentum using deep learning forecasts.
+
+- 📊 **Risk-aware investment decision support**  
+  Combine forecasted returns, volatility, and Sharpe Ratio for informed decisions.
+
+- 🧪 **Model comparison for financial forecasting research**  
+  Analyze performance differences between SimpleRNN and LSTM architectures.
+
+- 🎓 **Educational demonstration of time-series deep learning**  
+  Practical example of applying RNN-based models to real-world financial data.
+
+- 🏢 **Portfolio-grade financial analytics dashboard**  
+  A deployable, interactive dashboard suitable for portfolio and case-study use.
+
+---
+---
+
+## 🚀 Future Enhancements
+
+- 📰 **News sentiment analysis** using NLP for market context enrichment  
+- 🔁 **Transformer-based time-series models** for long-range dependencies  
+- 📊 **Probabilistic forecasting** with confidence intervals and uncertainty bands  
+- 🌐 **Live market data API integration** for real-time predictions  
+- 📈 **Multi-stock comparison dashboard** for cross-asset analysis  
+- 🔄 **Automated retraining pipeline** for continuous model updates  
+
+---
+---
+
+## ⚠️ Disclaimer
+
+This project is intended for **educational and analytical purposes only**.  
+It does **not** constitute financial, investment, or trading advice.  
+
+Stock markets are inherently volatile and unpredictable.  
+Predictions generated by this system should be interpreted as **directional insights**, not guaranteed outcomes.
+
+
+---
+---
+## 🤝 Author
+
+### **Predeep Kumar**
+
+🧑‍💻 **AI Engineer | Deep Learning | Time-Series Forecasting**
+
+Built with ❤️ as a **production-ready deep learning financial forecasting project**,  
+demonstrating strong model design, rigorous evaluation, and deployment-ready analytics.
+
 
