@@ -54,9 +54,6 @@ Create a deep learning–based predictive system to forecast Tesla’s stock clo
 ---
 ---
 
----
----
-
 ## 📁 Project Structure
 ```
 Tesla_Stock_Price_Predication/
