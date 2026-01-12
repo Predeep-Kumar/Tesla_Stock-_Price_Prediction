@@ -19,24 +19,24 @@ import joblib
 @st.cache_resource(show_spinner=False)
 def load_forecast_model(model_path):
     return load_model(model_path, compile=False)
-# ======================================================
+
 # PAGE CONFIG
-# ======================================================
+
 st.set_page_config(
     page_title="Tesla Stock Forecast Dashboard",
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
-# ======================================================
+
 # LOAD CSS (Glassmorphism)
-# ======================================================
+
 with open("assets/styles.css") as f:
     st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
-# ======================================================
+
 # PATHS
-# ======================================================
+
 ROOT = Path(__file__).parent
 DATA_PATH = ROOT / "data" / "TSLA.csv"
 MODEL_DIR = ROOT / "models"
@@ -98,9 +98,9 @@ def calculate_model_confidence(row, forecast_days, volatility):
 
 
 
-# ======================================================
+
 # LOAD DATA
-# ======================================================
+
 df = pd.read_csv(DATA_PATH, parse_dates=["Date"])
 df.sort_values("Date", inplace=True)
 
@@ -110,23 +110,23 @@ recent_df = df.tail(LOOKBACK_DAYS).copy()
 close_prices = df["Close"].values.reshape(-1, 1)
 last_close = float(close_prices[-1][0])
 
-# ======================================================
+
 # LOAD SCALER
-# ======================================================
+
 scaler = joblib.load(SCALER_PATH)
 scaled_close = scaler.transform(close_prices)
 
-# ======================================================
+
 # LOAD BEST MODEL INFO
-# ======================================================
+
 with open(REPORT_PATH) as f:
     best_model_info = json.load(f)
 
 best_model_name = best_model_info["model_name"]
 
-# ======================================================
+
 # MODEL REGISTRY
-# ======================================================
+
 model_files = {
     "LSTM_Tuned": "lstm_tuned.h5",
     "LSTM_Baseline": "lstm_baseline_best.h5",
@@ -137,9 +137,9 @@ recent_df["Daily Return %"] = recent_df["Close"].pct_change() * 100
 recent_df["Volatility"] = recent_df["Daily Return %"].rolling(10).std()
 
 
-# ======================================================
+
 # SIDEBAR — ADVANCED FORECAST CONTROL PANEL
-# ======================================================
+
 
 import time
 
@@ -186,9 +186,9 @@ with st.sidebar:
         """,
         unsafe_allow_html=True
     )
-   # ==================================================
+
     # SECTION 1 — MODEL SELECTION MODE
-    # ==================================================
+
     st.markdown(
         """
         <div class="sidebar-section-title">🧠 Model Selection</div>
@@ -258,9 +258,9 @@ with st.sidebar:
 
 
     model = st.session_state.model
-    # ==================================================
+
     # SECTION 2 — FORECAST HORIZON
-    # ==================================================
+
     st.markdown(
         """
         <div class="sidebar-section-title">⏳ Forecast Horizon</div>
@@ -285,9 +285,9 @@ with st.sidebar:
 
     st.markdown("<div class='sidebar-divider'></div>", unsafe_allow_html=True)
 
-    # ==================================================
+
     # SECTION 3 — ANALYSIS OPTIONS
-    # ==================================================
+
     st.markdown(
         """
         <div class="sidebar-section-title">📊 Analysis Options</div>
@@ -311,9 +311,9 @@ with st.sidebar:
 
     st.markdown("<div class='sidebar-divider'></div>", unsafe_allow_html=True)
 
-    # ==================================================
+
     # SECTION 4 — MODEL STATUS (TEXT STYLE, NO CARDS)
-    # ==================================================
+
     
 
     model_confidence = {}
@@ -338,26 +338,27 @@ with st.sidebar:
         """,
         unsafe_allow_html=True
     )
-
+    confidence_text = f"{confidence_score:.1f}%" if confidence_score is not None else "N/A"
     st.markdown(
-        f"""
-        <div style="margin-top:6px; font-size:13px; color:#e5e7eb;">
-            <b>Active Model:</b> {active_model}<br/>
-            <b>Model Confidence:</b> {confidence_score:.1f}% if confidence_score is not None else "N/A"
-            <span style="color:#9ca3af;">
-                Confidence derived from MAPE, horizon length, and volatility
-            </span>
-            <span style="color:#9ca3af;">
-                Confidence adjusted for recent volatility
-            </span>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
+    f"""
+    <div style="margin-top:6px; font-size:13px; color:#e5e7eb;">
+        <b>Active Model:</b> {active_model}<br/>
+        <b>Model Confidence:</b> {confidence_text}
+        <br/>
+        <span style="color:#9ca3af;">
+            Confidence derived from MAPE, MAE forecast horizon, and volatility
+        </span><br/>
+        <span style="color:#9ca3af;">
+            Confidence adjusted for recent market volatility
+        </span>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
 
-    # ==================================================
+
     # SIDEBAR FOOTER
-    # ==================================================
+
     st.markdown(
         """
         <div class="sidebar-divider"></div>
@@ -372,9 +373,9 @@ with st.sidebar:
    
 
 
-# ======================================================
+
 # FORECAST FUNCTION (SCALED → REAL)
-# ======================================================
+
 LOOKBACK = 60
 
 def forecast_prices(series_scaled, days):
@@ -385,9 +386,9 @@ def forecast_prices(series_scaled, days):
     preds_scaled = preds_scaled[:days].reshape(-1, 1)
     return scaler.inverse_transform(preds_scaled).flatten()
 
-# ======================================================
+
 # RUN FORECAST
-# ======================================================
+
 
 
 future_dates = pd.date_range(
@@ -409,9 +410,7 @@ future_dates_table = pd.date_range(
     periods=table_days
 )
 
-# ======================================================
-# MARKET SNAPSHOT  ⬅️ ADD HERE
-# ======================================================
+
 
 st.markdown("<div class='section-title'>Market Outlook & Trade Signal</div>", unsafe_allow_html=True)
 
@@ -466,8 +465,6 @@ with c2:
 
 
 
-
-
 # Expected returns vs last close
 forecast_returns = (forecast - last_close) / last_close
 
@@ -475,8 +472,6 @@ avg_return_pct = forecast_returns.mean() * 100
 
 # Direction consistency
 positive_days = np.sum(forecast_returns > 0)
-
-
 
 
 
@@ -513,10 +508,9 @@ with c3:
         unsafe_allow_html=True
     )
 
-# ======================================================
 # CANDLESTICK + FORECAST (SOLID CANDLES)
-# ======================================================
-st.markdown("<div class='section-title'>ecent Market Price Behavior</div>", unsafe_allow_html=True)
+
+st.markdown("<div class='section-title'>Recent Market Price Behavior</div>", unsafe_allow_html=True)
 
 fig_candle = go.Figure()
 
@@ -550,10 +544,8 @@ fig_candle.update_layout(
 
 st.plotly_chart(fig_candle, width="stretch")
 
-# ======================================================
-# FORECAST OUTLOOK CARDS
-# ======================================================
 
+# FORECAST OUTLOOK CARDS
 
 def outlook_card(title, price, base):
     delta = price - base
@@ -582,10 +574,8 @@ def outlook_card(title, price, base):
 
 
 
-
-# ======================================================
 # SHARPE RATIO (RISK-ADJUSTED METRIC)
-# ======================================================
+
 
 forecast_daily_returns = (
     np.diff(forecast_table) / forecast_table[:-1]
@@ -615,10 +605,8 @@ else:
 
 
 
-
-# ======================================================
 # LINE PRICE CHART + FORECAST (CLEAN MARKET VIEW)
-# ======================================================
+
 
 fig_line = go.Figure()
 
@@ -666,9 +654,7 @@ fig_line.update_layout(
     title="Historical vs Forecast Trend"
 )
 
-# ======================================================
 # FORECAST CANDLESTICKS (PREDICTED ZONE)
-# ======================================================
 
 # Create synthetic forecast candles
 forecast_open = [last_close] + list(forecast[:-1])
@@ -704,11 +690,11 @@ fig_forecast_candle.add_trace(go.Candlestick(
     opacity=1,
     increasing=dict(
         line=dict(color="#22c55e", width=2),
-        fillcolor="rgba(34,197,94,0.12)"   # subtle green tint
+        fillcolor="rgba(34,197,94,0.12)"   
     ),
     decreasing=dict(
         line=dict(color="#ef4444", width=2),
-        fillcolor="rgba(239,68,68,0.12)"   # subtle red tint
+        fillcolor="rgba(239,68,68,0.12)"   
     ),
     whiskerwidth=0.6
 ))
@@ -736,7 +722,7 @@ fig_line.update_layout(
     template="plotly_dark",
     height=COMMON_HEIGHT,
     hovermode="x unified",
-    margin=dict(l=10, r=10, t=70, b=20),  # more top space for legend
+    margin=dict(l=10, r=10, t=70, b=20),  
     title="Price Trend View (Line)",
     legend=dict(
         orientation="h",
@@ -774,12 +760,8 @@ with col2:
     st.plotly_chart(fig_line, width="stretch")
 
 
-
-
-
-# ======================================================
 # FORECAST TABLE (COLORED)
-# ======================================================
+
 rows = []
 prev_price = last_close
 
@@ -809,16 +791,12 @@ styled_df = forecast_df.style.map(color_change, subset=["Expected Change", "Chan
 
 
 
-# =========================
-# MAIN SPLIT: LEFT / RIGHT
-# =========================
 st.markdown("<div class='section-title'>Forecast Breakdown & Market Outlook</div>", unsafe_allow_html=True)
 
 left_col, right_col = st.columns([1.4, 1])
 
-# -------------------------------------------------
 # LEFT: FORECAST TABLE
-# -------------------------------------------------
+
 with left_col:
     if forecast_days < 10:
         st.caption(
@@ -827,9 +805,9 @@ with left_col:
         )
     st.dataframe(styled_df, width="stretch")
 
-# -------------------------------------------------
+
 # RIGHT: 2 ROWS × 2 COLUMNS (OUTLOOK + SHARPE)
-# -------------------------------------------------
+
 with right_col:
     st.markdown("<div style='height:5vh'></div>", unsafe_allow_html=True)
     # ---------- ROW 1 ----------
@@ -874,9 +852,8 @@ with right_col:
     unsafe_allow_html=True
 )
 
-# ======================================================
 # RISK & MARKET ANALYSIS (LAST 60 DAYS)
-# ======================================================
+
 st.markdown("<div class='section-title'>Risk & Market Analysis</div>", unsafe_allow_html=True)
 
 recent_df["Daily Return %"] = recent_df["Close"].pct_change() * 100
@@ -960,129 +937,124 @@ with col2:
 
 
 
-
-
-# ======================================================
 # MULTI-MODEL FORECAST OVERLAY (CORRECT & COMPLETE)
-# ======================================================
+
 
 if show_model_comparison:
 
     st.markdown("<div class='section-title'>Multi-Model Forecast Comparison</div>", unsafe_allow_html=True)
+    with st.spinner("Rendering multi-model forecast comparison..."):
 
-    fig_multi = go.Figure()
+        fig_multi = go.Figure()
 
-    # =============================
-    # Historical line
-    # =============================
-    fig_multi.add_trace(go.Scatter(
-        x=recent_df["Date"],
-        y=recent_df["Close"],
-        name="Historical",
-        line=dict(color="#9ca3af", width=2),
-        opacity=0.85
-    ))
-
-    # =============================
-    # Model styles
-    # =============================
-    model_styles = {
-        "LSTM_Tuned": ("#22c55e", "solid"),
-        "LSTM_Baseline": ("#10b981", "dot"),
-        "SimpleRNN_Tuned": ("#3b82f6", "solid"),
-        "SimpleRNN_Baseline": ("#60a5fa", "dot"),
-    }
-
-    # =============================
-    # Forecast for each model
-    # =============================
-    for model_name, model_file in model_files.items():
-
-        temp_model = load_model(MODEL_DIR / model_file, compile=False)
-        
-
-        X = scaled_close[-LOOKBACK:].reshape(1, LOOKBACK, 1)
-
-        preds_scaled = temp_model.predict(X, verbose=0).flatten()
-        preds_scaled = preds_scaled[:forecast_days].reshape(-1, 1)
-
-        preds_real = scaler.inverse_transform(preds_scaled).flatten()
-
-        plot_x = [recent_df["Date"].iloc[-1]] + list(future_dates)
-        plot_y = [last_close] + list(preds_real)
-
-        color, dash_style = model_styles[model_name]
+    
+        # Historical line
 
         fig_multi.add_trace(go.Scatter(
-            x=plot_x,
-            y=plot_y,
-            name=model_name,
-            mode="lines",
-            line=dict(
-                color=color,
-                width=2.5,
-                dash=dash_style,
-                shape="spline",
-                smoothing=1.1
-            ),
-            opacity=0.9
+            x=recent_df["Date"],
+            y=recent_df["Close"],
+            name="Historical",
+            line=dict(color="#9ca3af", width=2),
+            opacity=0.85
         ))
 
-    # =============================
-    # Forecast start marker
-    # =============================
-    forecast_start_date = recent_df["Date"].iloc[-1].to_pydatetime()
+    
+        # Model styles
 
-    fig_multi.add_vline(
-        x=forecast_start_date,
-        line_width=1,
-        line_dash="dot",
-        line_color="#facc15"
-    )
+        model_styles = {
+            "LSTM_Tuned": ("#22c55e", "solid"),
+            "LSTM_Baseline": ("#10b981", "dot"),
+            "SimpleRNN_Tuned": ("#3b82f6", "solid"),
+            "SimpleRNN_Baseline": ("#60a5fa", "dot"),
+        }
 
-    fig_multi.add_annotation(
-        x=forecast_start_date,
-        y=max(recent_df["Close"]) * 1.03,
-        text="Forecast Start",
-        showarrow=True,
-        arrowhead=2,
-        arrowcolor="#facc15",
-        font=dict(color="#facc15", size=12),
-        yanchor="bottom"
-    )
+        # Forecast for each model
 
-    # =============================
-    # Layout (Spacing Optimized)
-    # =============================
-    fig_multi.update_layout(
-        template="plotly_dark",
-        height=460,
-        hovermode="x unified",
-        margin=dict(l=40, r=40, t=60, b=40),
-        legend=dict(
-            orientation="h",
-            yanchor="bottom",
-            y=1.10,
-            xanchor="center",
-            x=0.5,
-            font=dict(size=12)
-        ),
-        xaxis=dict(
-            showgrid=True,
-            gridcolor="rgba(255,255,255,0.05)"
-        ),
-        yaxis=dict(
-            showgrid=True,
-            gridcolor="rgba(255,255,255,0.05)"
+        for model_name, model_file in model_files.items():
+
+            temp_model = load_model(MODEL_DIR / model_file, compile=False)
+            
+
+            X = scaled_close[-LOOKBACK:].reshape(1, LOOKBACK, 1)
+
+            preds_scaled = temp_model.predict(X, verbose=0).flatten()
+            preds_scaled = preds_scaled[:forecast_days].reshape(-1, 1)
+
+            preds_real = scaler.inverse_transform(preds_scaled).flatten()
+
+            plot_x = [recent_df["Date"].iloc[-1]] + list(future_dates)
+            plot_y = [last_close] + list(preds_real)
+
+            color, dash_style = model_styles[model_name]
+
+            fig_multi.add_trace(go.Scatter(
+                x=plot_x,
+                y=plot_y,
+                name=model_name,
+                mode="lines",
+                line=dict(
+                    color=color,
+                    width=2.5,
+                    dash=dash_style,
+                    shape="spline",
+                    smoothing=1.1
+                ),
+                opacity=0.9
+            ))
+
+
+        # Forecast start marker
+        forecast_start_date = recent_df["Date"].iloc[-1].to_pydatetime()
+
+        fig_multi.add_vline(
+            x=forecast_start_date,
+            line_width=1,
+            line_dash="dot",
+            line_color="#facc15"
         )
-    )
 
-    st.plotly_chart(fig_multi, width="stretch")
+        fig_multi.add_annotation(
+            x=forecast_start_date,
+            y=max(recent_df["Close"]) * 1.03,
+            text="Forecast Start",
+            showarrow=True,
+            arrowhead=2,
+            arrowcolor="#facc15",
+            font=dict(color="#facc15", size=12),
+            yanchor="bottom"
+        )
 
 
-# ==============================
+        # Layout 
+
+        fig_multi.update_layout(
+            template="plotly_dark",
+            height=460,
+            hovermode="x unified",
+            margin=dict(l=40, r=40, t=60, b=40),
+            legend=dict(
+                orientation="h",
+                yanchor="bottom",
+                y=1.10,
+                xanchor="center",
+                x=0.5,
+                font=dict(size=12)
+            ),
+            xaxis=dict(
+                showgrid=True,
+                gridcolor="rgba(255,255,255,0.05)"
+            ),
+            yaxis=dict(
+                showgrid=True,
+                gridcolor="rgba(255,255,255,0.05)"
+            )
+        )
+
+        st.plotly_chart(fig_multi, width="stretch")
+
+
+
 # TEXT INTERPRETATION VARIABLES
-# ==============================
 
 # Trend direction
 trend_text = (
